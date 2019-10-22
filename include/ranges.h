@@ -121,7 +121,7 @@ public:
     /* construction */
     zip_iterator() = default;
 
-    template <typename U = int, std::enable_if_t<std::tuple_size_v<std::tuple<Its...>> != 0, U> = 0>
+    template <typename U = int, std::enable_if_t<sizeof...(Its) != 0, U> = 0>
     explicit zip_iterator(Its... its) : its(its...) {}
 
     /* dereference */
