@@ -139,7 +139,9 @@ public:
     }
 
     template <typename U = int, std::enable_if_t<detail::is_random_access<iterator_category>, U> = 0>
-    reference operator[](difference_type n) const { return *(*this + n); }
+    reference operator[](difference_type n) const {
+        return *(*this + n);
+    }
 
     /* increment */
     zip_iterator &operator++() {
@@ -264,49 +266,51 @@ public:
 
     template <typename... Ranges>
     explicit zip(Ranges &&... ranges)
-      : zbegin(lmeta::adl_begin(ranges)...), zend(lmeta::adl_end(ranges)...) {}
+      : begin_(lmeta::adl_begin(ranges)...), end_(lmeta::adl_end(ranges)...) {}
 
-    zip_iterator<Its...> begin() const { return zbegin; }
-    zip_iterator<Its...> end() const { return zend; }
-    std::ptrdiff_t size() const { return zend - zbegin; }
+    zip_iterator<Its...> begin() const { return begin_; }
+    zip_iterator<Its...> end() const { return end_; }
+    std::ptrdiff_t size() const { return end_ - begin_; }
 
 private:
-    zip_iterator<Its...> zbegin;
-    zip_iterator<Its...> zend;
+    zip_iterator<Its...> begin_;
+    zip_iterator<Its...> end_;
 };
 
 template <typename... Ranges>
 zip(Ranges &&... ranges)->zip<decltype(lmeta::adl_begin(ranges))...>;
 
-/* enumerate iterator */
+/* indexed iterator */
 template <typename It>
-class enumerate_iterator {
+class indexed_iterator {
 public:
     /* usual iterator typedefs */
     using difference_type = std::ptrdiff_t;
-    using value_type = std::tuple<difference_type, typename std::iterator_traits<It>::value_type>;
+    using value_type =
+        std::tuple<difference_type, typename std::iterator_traits<It>::value_type>;
     using pointer = std::tuple<difference_type, typename std::iterator_traits<It>::pointer>;
-    using reference = std::tuple<difference_type, typename std::iterator_traits<It>::reference>;
+    using reference =
+        std::tuple<difference_type, typename std::iterator_traits<It>::reference>;
     using iterator_category = typename std::iterator_traits<It>::iterator_category;
 
-    enumerate_iterator() = default;
+    indexed_iterator() = default;
 
-    explicit enumerate_iterator(It it) : it(it), begin_(it) {}
-    explicit enumerate_iterator(It it, It begin_) : it(it), begin_(begin_) {}
+    explicit indexed_iterator(It it) : it(it), begin_(it) {}
+    explicit indexed_iterator(It it, It begin_) : it(it), begin_(begin_) {}
 
     /* dereference */
     reference operator*() const { return lmeta::safe_forward_as_tuple(it - begin_, *it); }
 
     /* certain output iterators don't return 'reference' */
-    //decltype(auto) operator*() { return std::make_pair(begin_ - it, *it); }
+    // decltype(auto) operator*() { return std::make_pair(begin_ - it, *it); }
 
     /* increment */
-    enumerate_iterator &operator++() {
+    indexed_iterator &operator++() {
         ++it;
         return *this;
     }
 
-    enumerate_iterator &operator++(int) {
+    indexed_iterator &operator++(int) {
         auto temp = *this;
         ++it;
         return temp;
@@ -315,10 +319,10 @@ public:
     /* todo: all the rest */
 
     /* comparison */
-    friend bool operator==(const enumerate_iterator &lhs, const enumerate_iterator &rhs) {
+    friend bool operator==(const indexed_iterator &lhs, const indexed_iterator &rhs) {
         return lhs.it == rhs.it;
     }
-    friend bool operator!=(const enumerate_iterator &lhs, const enumerate_iterator &rhs) {
+    friend bool operator!=(const indexed_iterator &lhs, const indexed_iterator &rhs) {
         return !(lhs.it == rhs.it);
     }
 
@@ -327,28 +331,28 @@ private:
 };
 
 template <typename It>
-class enumerate {
+class indexed {
 public:
-    enumerate() = default;
+    indexed() = default;
 
     template <typename Range>
-    explicit enumerate(Range &&range)
-      : ebegin(lmeta::adl_begin(range)), eend(lmeta::adl_end(range)) {}
+    explicit indexed(Range &&range)
+      : begin_(lmeta::adl_begin(range)), end_(lmeta::adl_end(range)) {}
 
-    enumerate_iterator<It> begin() const { return ebegin; }
-    enumerate_iterator<It> end() const { return eend; }
-    std::ptrdiff_t size() const { return eend - ebegin; }
+    indexed_iterator<It> begin() const { return begin_; }
+    indexed_iterator<It> end() const { return end_; }
+    std::ptrdiff_t size() const { return end_ - begin_; }
 
 private:
-    enumerate_iterator<It> ebegin;
-    enumerate_iterator<It> eend;
+    indexed_iterator<It> begin_;
+    indexed_iterator<It> end_;
 };
 
 template <typename Range>
-enumerate(Range && range)->enumerate<decltype(lmeta::adl_begin(range))>;
+indexed(Range &&range)->indexed<decltype(lmeta::adl_begin(range))>;
 
 /* generating input iterator */
 template <typename It, typename Gen>
 class generator {};
 
-} // namespace lranges
+} // namespace drift

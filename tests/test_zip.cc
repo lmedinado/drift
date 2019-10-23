@@ -4,7 +4,7 @@
 #include <type_traits>
 #include <vector>
 
-#include "../include/ranges.h"
+#include "../include/drift.h"
 #include "../../catch2/catch.hpp"
 
 
@@ -45,7 +45,6 @@ TEST_CASE("can access by a zip iterator", "[zip]") {
         auto [za1, za2] = zzz[2];
         REQUIRE(za1 == 2);
         REQUIRE(za2 == 5);
-        // std::cout << "\nsubscript access: za1, za2 = " << za1 << ", " << za2;
     }
 
     SECTION("for loop with manually defined bounds") {
@@ -58,7 +57,6 @@ TEST_CASE("can access by a zip iterator", "[zip]") {
             REQUIRE(za1 == arr1[i]);
             REQUIRE(za2 == arr2[i]);
             ++i;
-            // std::cout << "\nzi[za1, za2]: " << za1 << ", " << za2;
         }
     }
 
@@ -72,7 +70,6 @@ TEST_CASE("can access by a zip iterator", "[zip]") {
             REQUIRE(za1 == arr1[i]);
             REQUIRE(za2 == arr2[i]);
             ++i;
-            // std::cout << "\nzi[za1, za2]: " << za1 << ", " << za2;
         }
     }
 
@@ -132,7 +129,6 @@ TEST_CASE("can access by a zip iterator", "[zip]") {
             REQUIRE(s1 == sarr1[i]);
             REQUIRE(s2 == sarr2[i]);
             ++i;
-            // std::cout << "\n[s1, s2]: " << s1 << ", " << s2;
         }
     }
 
@@ -141,7 +137,6 @@ TEST_CASE("can access by a zip iterator", "[zip]") {
         for (auto [s1, s2] : drift::zip(sarr1, sarr2)) {
             REQUIRE(s1 == sarr1[i]);
             REQUIRE(s2 == sarr2[i]);
-            // std::cout << "\n[s1, s2]: " << s1 << ", " << s2;
             s1 = 3;
             ++i;
         }
@@ -150,7 +145,6 @@ TEST_CASE("can access by a zip iterator", "[zip]") {
         for (auto [s1, s2] : drift::zip(sarr1, sarr2)) {
             REQUIRE(s1 == 3);
             REQUIRE(s2 == sarr2[i]);
-            // std::cout << "\n[s1, s2]: " << s1 << ", " << s2;
             s1 = 3;
             ++i;
         }
@@ -180,18 +174,15 @@ TEST_CASE("can access by a zip iterator", "[zip]") {
         for (auto [b1, b2] : drift::zip(vb1, vb2)) {
             REQUIRE(b1 == vb1[i]);
             REQUIRE(b2 == vb2[i]);
-            // std::cout << "\nb1, b2: " << b1 << b2;
             ++i;
         }
     }
 
-    SECTION("zip together with enumerate") {
-        // std::cout << "\ntesting enumerate and zip together";
-        for (auto [i, vb] : drift::enumerate(drift::zip(vb1, vb2))) {
+    SECTION("indexed and zip together") {
+        for (auto [i, vb] : drift::indexed(drift::zip(vb1, vb2))) {
             auto [b1, b2] = vb;
             REQUIRE(b1 == vb1[i]);
             REQUIRE(b2 == vb2[i]);
-            // std::cout << "\n" << i << ": " << b1 << b2;
         }
     }
 }
