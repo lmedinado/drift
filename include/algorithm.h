@@ -1,5 +1,6 @@
 #pragma once
 #include <algorithm>
+#include <numeric>
 
 namespace drift {
 
@@ -29,6 +30,17 @@ namespace drift {
                                                                                \
         return std::algo(begin(in_range), end(in_range), std::forward<T1>(t1), \
                          std::forward<T2>(t2));                                \
+    }
+
+
+#define DRIFT_ONE_IN_THREE_T(algo)                                             \
+    template <typename InRange, typename T1, typename T2, typename T3>         \
+    constexpr auto algo(InRange &&in_range, T1 &&t1, T2 &&t2, T3 &&t3) {       \
+        using std::begin;                                                      \
+        using std::end;                                                        \
+                                                                               \
+        return std::algo(begin(in_range), end(in_range), std::forward<T1>(t1), \
+                         std::forward<T2>(t2), std::forward<T3>(t3));          \
     }
 
 #define DRIFT_ONE_IN_ONE_OUT(algo)                                          \
@@ -69,6 +81,16 @@ namespace drift {
         return std::algo(begin(in_range1), end(in_range1), begin(in_range2)); \
     }
 
+#define DRIFT_TWO_IN_ONE_T(algo)                                             \
+    template <typename InRange1, typename InRange2, typename T>              \
+    constexpr auto algo(InRange1 &&in_range1, InRange2 &&in_range2, T &&t) { \
+        using std::begin;                                                    \
+        using std::end;                                                      \
+                                                                             \
+        return std::algo(begin(in_range1), end(in_range1), begin(in_range2), \
+                         std::forward<T>(t));                                \
+    }
+
 #define DRIFT_TWO_IN_ONE_OUT_ONE_T(algo)                                           \
     template <typename InRange1, typename InRange2, typename OutRange, typename T> \
     constexpr auto algo(InRange1 &&in_range1, InRange2 &&in_range2,                \
@@ -78,6 +100,17 @@ namespace drift {
                                                                                    \
         return std::algo(begin(in_range1), end(in_range1), begin(in_range2),       \
                          begin(out_range), std::forward<T>(t));                    \
+    }
+
+#define DRIFT_TWO_IN_THREE_T(algo)                                                                            \
+    template <typename InRange1, typename InRange2, typename OutRange, typename T1, typename T2, typename T3> \
+    constexpr auto algo(InRange1 &&in_range1, InRange2 &&in_range2, T1 &&t1, T2 &&t2,                         \
+                        T3 &&t3) {                                                                            \
+        using std::begin;                                                                                     \
+        using std::end;                                                                                       \
+                                                                                                              \
+        return std::algo(begin(in_range1), end(in_range1), begin(in_range2),                                  \
+                         std::forward<T1>(t1), std::forward<T2>(t2), std::forward<T1>(t3));                   \
     }
 
 /* std::all_of, std::any_of, std::none_of*/
@@ -171,13 +204,185 @@ DRIFT_ONE_IN(unique)
 /* std::unique_copy */
 DRIFT_ONE_IN_ONE_OUT(unique_copy)
 
+/* is_partitioned
+
+partition
+
+partition_copy
+
+stable_partition
+
+partition_point
+
+is_sorted
+
+is_sorted_until
+
+sort
+
+partial_sort
+
+partial_sort_copy
+
+stable_sort
+
+nth_element
+
+lower_bound
+
+upper_bound
+
+binary_search
+
+equal_range
+
+merge
+
+inplace_merge
+
+includes
+
+set_difference
+
+set_intersection
+
+set_symmetric_difference
+
+set_union
+
+is_heap
+
+is_heap_until
+
+make_heap
+
+push_heap
+
+pop_heap
+
+sort_heap
+
+max
+
+max_element
+
+min
+
+min_element
+
+minmax
+
+minmax_element
+
+clamp
+
+equal
+
+lexicographical_compare
+
+is_permutation
+
+next_permutation
+
+prev_permutation
+
+iota
+
+accumulate
+
+inner_product
+
+adjacent_difference
+
+partial_sum
+
+reduce
+
+exclusive_scan
+
+inclusive_scan
+
+transform_reduce
+
+transform_exclusive_scan
+
+transform_inclusive_scan
+
+uninitialized_copy
+
+uninitialized_copy_n
+
+uninitialized_fill
+
+uninitialized_fill_n
+
+uninitialized_move
+
+uninitialized_move_n
+
+uninitialized_default_construct
+
+uninitialized_default_construct_n
+
+uninitialized_value_construct
+
+uninitialized_value_construct_n
+
+destroy_at
+
+destroy
+
+destroy_n */
+
+/* algorithms from <numeric> */
+/* iota */
+DRIFT_ONE_IN_ONE_T(iota)
+
+/* accumulate */
+DRIFT_ONE_IN_ONE_T(accumulate)
+DRIFT_ONE_IN_TWO_T(accumulate)
+
+/* reduce */
+DRIFT_ONE_IN_ONE_T(reduce)
+DRIFT_ONE_IN_TWO_T(reduce)
+
+/* transform_reduce */
+DRIFT_TWO_IN_ONE_T(transform_reduce)
+DRIFT_TWO_IN_THREE_T(transform_reduce)
+DRIFT_ONE_IN_THREE_T(transform_reduce)
+
+/* inner_product */
+DRIFT_TWO_IN_ONE_T(inner_product)
+DRIFT_TWO_IN_THREE_T(inner_product)
+
+/*
+adjacent_difference
+
+partial_sum
+
+inclusive_scan
+
+exclusive_scan
+
+transform_inclusive_scan
+
+transform_exclusive_scan
+
+*/
+
+
 #undef DRIFT_ONE_IN
 #undef DRIFT_ONE_IN_ONE_T
 #undef DRIFT_ONE_IN_TWO_T
+#undef DRIFT_ONE_IN_THREE_T
+
 #undef DRIFT_ONE_IN_ONE_OUT
 #undef DRIFT_ONE_IN_ONE_OUT_ONE_T
 #undef DRIFT_ONE_IN_ONE_OUT_TWO_T
 
 #undef DRIFT_TWO_IN
+#undef DRIFT_TWO_IN_ONE_T
+#undef DRIFT_TWO_IN_THREE_T
 #undef DRIFT_TWO_IN_ONE_OUT_ONE_T
+
 } // namespace drift
