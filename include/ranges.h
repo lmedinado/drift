@@ -57,7 +57,7 @@ LMETA_ADL_WRAP(size)
 
 } // namespace lmeta
 
-namespace lranges {
+namespace drift {
 
 namespace detail {
 

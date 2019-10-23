@@ -6,9 +6,9 @@
 
 int main() {
    // #ifdef XXXXX
-    auto z = lranges::zip<int*>();
+    auto z = drift::zip<int*>();
     int a = 0, b = 1, c = 2;
-    auto zz = lranges::zip_iterator(&a,&b,&c);
+    auto zz = drift::zip_iterator(&a,&b,&c);
     std::cout << "before: ";
     std::cout << "\na: " << a;
     std::cout << "\nb: " << b;
@@ -26,7 +26,7 @@ int main() {
 
     int arr1[] {0, 1, 2};
     int arr2[] {3, 4, 5};
-    auto zzz = lranges::zip_iterator(arr1, arr2);
+    auto zzz = drift::zip_iterator(arr1, arr2);
 
     for (int i = 0; i < 3; ++i) {
         auto [za1, za2] = *zzz;
@@ -39,9 +39,9 @@ int main() {
         std::cout << "\nsubscript access: za1, za2 = " << za1 << ", " << za2;  
     }
 
- //   auto zbeg = lranges::zip_iterator(arr1, arr2);
- //   auto zend = lranges::zip_iterator(arr1 + 3, arr2 + 3);
-    for(auto zi = lranges::zip_iterator(arr1, arr2), zend = lranges::zip_iterator(arr1 + 3, arr2 + 3); zi != zend; ++zi) {
+ //   auto zbeg = drift::zip_iterator(arr1, arr2);
+ //   auto zend = drift::zip_iterator(arr1 + 3, arr2 + 3);
+    for(auto zi = drift::zip_iterator(arr1, arr2), zend = drift::zip_iterator(arr1 + 3, arr2 + 3); zi != zend; ++zi) {
         auto [za1, za2] = *zi;
         std::cout << "\nzi[za1, za2]: " << za1 << ", " << za2;
     }
@@ -49,27 +49,27 @@ int main() {
 
     std::array<int, 3> sarr1 = {0, 1, 2};
     const std::array<int, 3> sarr2 = {3, 4, 5};
-    for(auto [s1, s2] : lranges::zip(sarr1, sarr2)) {
+    for(auto [s1, s2] : drift::zip(sarr1, sarr2)) {
         std::cout << "\n[s1, s2]: " << s1 << ", " << s2;
         s1 = 3;
     }
 
     std::cout << "\nsecond time:";
-    for(auto [s1, s2] : lranges::zip(sarr1, sarr2)) {
+    for(auto [s1, s2] : drift::zip(sarr1, sarr2)) {
         std::cout << "\n[s1, s2]: " << s1 << ", " << s2;
     }
-    std::cout << "\nsize: " << lranges::zip(sarr1, sarr2).size();
+    std::cout << "\nsize: " << drift::zip(sarr1, sarr2).size();
     
     // {
     // std::vector x = {1, 2, 3, 4, 5, 6};
     // std::vector<int> x_sq;
 
-    // for (auto z = lranges::zip_iterator(begin(x), back_inserter(x_sq)); z != lranges::zip_iterator(end(x), back_inserter(x_sq) ); ++z) {
+    // for (auto z = drift::zip_iterator(begin(x), back_inserter(x_sq)); z != drift::zip_iterator(end(x), back_inserter(x_sq) ); ++z) {
     //     auto [xel, x_sq_el] = *z;
     //     x_sq_el = xel*xel;
     // }
     //     std::cout << "\ntesting back_inserter0:";
-    //     for(auto [x1,x2] : lranges::zip(x, x_sq)) {
+    //     for(auto [x1,x2] : drift::zip(x, x_sq)) {
     //         std::cout << "\nx1, x2: " << x1 << ", " << x2;
     //     }
     // }
@@ -79,9 +79,9 @@ int main() {
     std::vector x = {1, 2, 3, 4, 5, 6};
     std::vector<int> x_sq;
     {
-        auto z2 = lranges::zip_iterator(back_inserter(x_sq));
-        for (auto z1 = lranges::zip_iterator(begin(x));
-             z1 != lranges::zip_iterator(end(x)); ++z1, ++z2) {
+        auto z2 = drift::zip_iterator(back_inserter(x_sq));
+        for (auto z1 = drift::zip_iterator(begin(x));
+             z1 != drift::zip_iterator(end(x)); ++z1, ++z2) {
             auto [xel] = *z1;
             auto [x_sq_el] = *z2;
 
@@ -89,14 +89,14 @@ int main() {
             //std::get<0>(*z2) = xel * xel;
         }
         std::cout << "\ntesting back_inserter1:";
-        for(auto [x1,x2] : lranges::zip(x, x_sq)) {
+        for(auto [x1,x2] : drift::zip(x, x_sq)) {
             std::cout << "\nx1, x2: " << x1 << ", " << x2;
         }
     }
     }
 
 
-    // for (auto z = lranges::zip_iterator(begin(x), back_inserter(x_sq));; ++z) {
+    // for (auto z = drift::zip_iterator(begin(x), back_inserter(x_sq));; ++z) {
     //     auto [xel, x_sq_el] = *z;
     //     x_sq_el = xel*xel;
     // }
@@ -112,7 +112,7 @@ int main() {
     //     std::cout << "\nx: " << x;
     // }
 
-    // for (auto [x, y] : lranges::zip(v, w)) {
+    // for (auto [x, y] : drift::zip(v, w)) {
     //     std::cout << "\nx, y: " << x << "," << y ;
     // }
 
@@ -120,23 +120,23 @@ int main() {
 
     auto vb1 = std::vector{true, false, false, true};
     auto vb2 = std::vector{false, true, true, false};
-    for(auto [b1, b2] : lranges::zip(vb1, vb2)) {
+    for(auto [b1, b2] : drift::zip(vb1, vb2)) {
         std::cout << "\nb1, b2: " << b1 << b2;
     }
 
     std::cout << "\ntesting enumerate";
     auto ex = std::vector{"zebra", "dog", "caiman", "frog"};
-    for(auto [i, v] : lranges::enumerate(ex)) {
+    for(auto [i, v] : drift::enumerate(ex)) {
         std::cout << "\n" << i << ": " << v;
     }
     
     std::cout << "\ntesting enumerate<bool>";
-    for(auto [i, b] : lranges::enumerate(vb1)) {
+    for(auto [i, b] : drift::enumerate(vb1)) {
         std::cout << "\n" << i << ": " << b;
     }
 
     std::cout << "\ntesting enumerate and zip together";
-    for(auto [i, vb] : lranges::enumerate(lranges::zip(vb1, vb2))) {
+    for(auto [i, vb] : drift::enumerate(drift::zip(vb1, vb2))) {
         auto [b1, b2] = vb;
         std::cout << "\n" << i << ": " << b1 << b2;
     }
