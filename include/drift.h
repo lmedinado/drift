@@ -1,3 +1,7 @@
+/* drift is poor man's ranges. */
+
+#pragma once
+
 #include <iterator>
 #include <tuple>
 
