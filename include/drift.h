@@ -186,6 +186,7 @@ public:
         auto temp = *this;
         lmeta::tuple_visit(its,
                            [](auto &&tel) { return ++std::forward<decltype(tel)>(tel); });
+        //++(*this);
         return temp;
     }
 
@@ -202,6 +203,7 @@ public:
         auto temp = *this;
         lmeta::tuple_visit(its,
                            [](auto &&tel) { return --std::forward<decltype(tel)>(tel); });
+        //--(*this);
         return temp;
     }
 
@@ -336,6 +338,11 @@ public:
     /* certain output iterators don't return 'reference' */
     // decltype(auto) operator*() { return std::make_pair(begin_ - it, *it); }
 
+    template <typename U = int, std::enable_if_t<detail::is_random_access<iterator_category>, U> = 0>
+    reference operator[](difference_type n) const {
+        return *(*this + n);
+    }
+
     /* increment */
     indexed_iterator &operator++() {
         ++it;
@@ -344,19 +351,86 @@ public:
 
     indexed_iterator &operator++(int) {
         auto temp = *this;
-        ++it;
+        ++(*this);
         return temp;
     }
 
-    /* todo: all the rest */
+     template <typename U = int, std::enable_if_t<detail::is_decrementable<iterator_category>, U> = 0>
+    indexed_iterator &operator--() {
+        --it;
+        return *this;
+    }
+
+    template <typename U = int, std::enable_if_t<detail::is_decrementable<iterator_category>, U> = 0>
+    indexed_iterator operator--(int) {
+        auto temp = *this;
+        --(*this);
+        return temp;
+    }
+
+    /* arithmetic */
+    template <typename U = int, std::enable_if_t<detail::is_random_access<iterator_category>, U> = 0>
+    indexed_iterator &operator+=(difference_type n) {
+        it += n;
+        return *this;
+    }
+
+    template <typename U = int, std::enable_if_t<detail::is_random_access<iterator_category>, U> = 0>
+    indexed_iterator &operator-=(difference_type n) {
+        it -= n;
+        return *this;
+    }
+
+    template <typename U = int, std::enable_if_t<detail::is_random_access<iterator_category>, U> = 0>
+    friend indexed_iterator operator+(indexed_iterator lhs, difference_type n) {
+        return lhs += n;
+    }
+
+    template <typename U = int, std::enable_if_t<detail::is_random_access<iterator_category>, U> = 0>
+    friend indexed_iterator operator+(difference_type n, indexed_iterator rhs) {
+        return rhs += n;
+    }
+
+    template <typename U = int, std::enable_if_t<detail::is_random_access<iterator_category>, U> = 0>
+    friend indexed_iterator operator-(indexed_iterator lhs, difference_type n) {
+        return lhs -= n;
+    }
+
+    /* iterator subtraction */
+    template <typename U = int, std::enable_if_t<detail::is_random_access<iterator_category>, U> = 0>
+    friend difference_type operator-(const indexed_iterator &lhs, const indexed_iterator &rhs) {
+        return lhs.it - rhs.it;
+    }
 
     /* comparison */
     friend bool operator==(const indexed_iterator &lhs, const indexed_iterator &rhs) {
-        return lhs.it == rhs.it;
+        return (lhs.it == rhs.it); // and (lhs.begin_ == rhs.begin_);
     }
     friend bool operator!=(const indexed_iterator &lhs, const indexed_iterator &rhs) {
-        return !(lhs.it == rhs.it);
+        return !(lhs == rhs);
     }
+
+    /* random access comparisons */
+    template <typename U = int, std::enable_if_t<detail::is_random_access<iterator_category>, U> = 0>
+    friend bool operator<(const indexed_iterator &lhs, const indexed_iterator &rhs) {
+        return lhs.it < rhs.it;
+    }
+
+    template <typename U = int, std::enable_if_t<detail::is_random_access<iterator_category>, U> = 0>
+    friend bool operator>(const indexed_iterator &lhs, const indexed_iterator &rhs) {
+        return lhs.it > rhs.it;
+    }
+
+    template <typename U = int, std::enable_if_t<detail::is_random_access<iterator_category>, U> = 0>
+    friend bool operator<=(const indexed_iterator &lhs, const indexed_iterator &rhs) {
+        return lhs.it <= rhs.it;
+    }
+
+    template <typename U = int, std::enable_if_t<detail::is_random_access<iterator_category>, U> = 0>
+    friend bool operator>=(const indexed_iterator &lhs, const indexed_iterator &rhs) {
+        return lhs.it >= rhs.it;
+    }
+
 
 private:
     It it, begin_;
@@ -385,6 +459,9 @@ indexed(Range &&range)->indexed<decltype(lmeta::adl_begin(range))>;
 
 /* generating input iterator */
 template <typename It, typename Gen>
-class generator {};
+class generator {
+    //Gen gen;
+
+};
 
 } // namespace drift

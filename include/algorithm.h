@@ -288,21 +288,13 @@ prev_permutation
 
 iota
 
-accumulate
-
-inner_product
-
 adjacent_difference
 
 partial_sum
 
-reduce
-
 exclusive_scan
 
 inclusive_scan
-
-transform_reduce
 
 transform_exclusive_scan
 

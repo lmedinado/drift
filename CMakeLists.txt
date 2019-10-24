@@ -20,6 +20,8 @@ target_sources(drift INTERFACE "$<BUILD_INTERFACE:${header_files}>")
 
 # tests
 add_library(tests_main OBJECT tests/tests_main.cc)
+#include_directories(tests_main OBJECT include/)
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include")
 
 add_executable(test_zip tests/test_zip.cc $<TARGET_OBJECTS:tests_main>)
 add_test(NAME test_zip COMMAND test_zip)
