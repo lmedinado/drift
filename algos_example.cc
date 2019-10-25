@@ -17,7 +17,7 @@ int main() {
         std::cout << a << " + " << b << " = " << c << "\n";
     }
 
-    std::cout << "there are " << drift::count(v, 3) << "3s in v.\n";
+    std::cout << "there are " << drift::count(v, 3) << " 3s in v.\n";
     std::cout << "there are " << drift::count_if(v, [](auto x) { return x % 2; })
               << " odd numbers in v.\n";
 

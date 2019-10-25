@@ -292,7 +292,6 @@ private:
     std::tuple<Its...> its;
 };
 
-
 template <typename... Its>
 class zip {
 public:
@@ -302,6 +301,7 @@ public:
     explicit zip(Ranges &&... ranges)
       : begin_(lmeta::adl_begin(ranges)...), end_(lmeta::adl_end(ranges)...) {}
 
+    /* todo: add cbegin, cend, rbegin, etc. */
     zip_iterator<Its...> begin() const { return begin_; }
     zip_iterator<Its...> end() const { return end_; }
     std::ptrdiff_t size() const { return end_ - begin_; }

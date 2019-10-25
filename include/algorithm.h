@@ -72,6 +72,17 @@ namespace drift {
                          std::forward<T1>(t1), std::forward<T2>(t2));                 \
     }
 
+#define DRIFT_ONE_IN_TWO_OUT_ONE_T(algo)                                            \
+    template <typename InRange, typename OutRange1, typename OutRange2, typename T> \
+    constexpr auto algo(InRange &&in_range, OutRange1 &&out_range1,                 \
+                        OutRange2 &&out_range2, T &&t) {                            \
+        using std::begin;                                                           \
+        using std::end;                                                             \
+                                                                                    \
+        return std::algo(begin(in_range), end(in_range), begin(out_range1),         \
+                         begin(out_range2), std::forward<T>(t));                    \
+    }
+
 #define DRIFT_TWO_IN(algo)                                                    \
     template <typename InRange1, typename InRange2>                           \
     constexpr auto algo(InRange1 &&in_range1, InRange2 &&in_range2) {         \
@@ -204,37 +215,36 @@ DRIFT_ONE_IN(unique)
 /* std::unique_copy */
 DRIFT_ONE_IN_ONE_OUT(unique_copy)
 
-/* is_partitioned
+/* is_partitioned, partition, partition_copy, stable_partition, partition_point */
+DRIFT_ONE_IN_ONE_T(is_partitioned)
+DRIFT_ONE_IN_ONE_T(partition)
+DRIFT_ONE_IN_TWO_OUT_ONE_T(partition_copy)
+DRIFT_ONE_IN_ONE_T(stable_partition)
+DRIFT_ONE_IN_ONE_T(partition_point)
 
-partition
+/* is_sorted, is_sorted_until, sort, stable_sort */
+DRIFT_ONE_IN(is_sorted)
+DRIFT_ONE_IN(is_sorted_until)
+DRIFT_ONE_IN(sort)
+DRIFT_ONE_IN_ONE_T(sort)
+DRIFT_ONE_IN(stable_sort)
+DRIFT_ONE_IN_ONE_T(stable_sort)
 
-partition_copy
+/* partial_sort, partial_sort_copy, nth_element */
 
-stable_partition
+/* lower_bound, upper_bound, binary_search, equal_range */
+DRIFT_ONE_IN_ONE_T(lower_bound)
+DRIFT_ONE_IN_TWO_T(lower_bound)
 
-partition_point
+DRIFT_ONE_IN_ONE_T(upper_bound)
+DRIFT_ONE_IN_TWO_T(upper_bound)
 
-is_sorted
+DRIFT_ONE_IN_ONE_T(binary_search)
+DRIFT_ONE_IN_TWO_T(binary_search)
 
-is_sorted_until
-
-sort
-
-partial_sort
-
-partial_sort_copy
-
-stable_sort
-
-nth_element
-
-lower_bound
-
-upper_bound
-
-binary_search
-
-equal_range
+DRIFT_ONE_IN_ONE_T(equal_range)
+DRIFT_ONE_IN_TWO_T(equal_range)
+/*
 
 merge
 
@@ -371,6 +381,7 @@ transform_exclusive_scan
 #undef DRIFT_ONE_IN_ONE_OUT
 #undef DRIFT_ONE_IN_ONE_OUT_ONE_T
 #undef DRIFT_ONE_IN_ONE_OUT_TWO_T
+#undef DRIFT_ONE_IN_TWO_OUT_ONE_T
 
 #undef DRIFT_TWO_IN
 #undef DRIFT_TWO_IN_ONE_T
