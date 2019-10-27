@@ -72,6 +72,16 @@ namespace drift {
                          std::forward<T1>(t1), std::forward<T2>(t2));                 \
     }
 
+#define DRIFT_ONE_IN_ONE_OUT_THREE_T(algo)                                                     \
+    template <typename InRange, typename OutRange, typename T1, typename T2, typename T3>      \
+    constexpr auto algo(InRange &&in_range, OutRange &&out_range, T1 &&t1, T2 &&t2, T3 &&t3) { \
+        using std::begin;                                                                      \
+        using std::end;                                                                        \
+                                                                                               \
+        return std::algo(begin(in_range), end(in_range), begin(out_range),                     \
+                         std::forward<T1>(t1), std::forward<T2>(t2), std::forward<T3>(t3));    \
+    }
+
 #define DRIFT_ONE_IN_TWO_OUT_ONE_T(algo)                                            \
     template <typename InRange, typename OutRange1, typename OutRange2, typename T> \
     constexpr auto algo(InRange &&in_range, OutRange1 &&out_range1,                 \
@@ -235,106 +245,60 @@ DRIFT_ONE_IN_ONE_T(stable_sort)
 /* lower_bound, upper_bound, binary_search, equal_range */
 DRIFT_ONE_IN_ONE_T(lower_bound)
 DRIFT_ONE_IN_TWO_T(lower_bound)
-
 DRIFT_ONE_IN_ONE_T(upper_bound)
 DRIFT_ONE_IN_TWO_T(upper_bound)
-
 DRIFT_ONE_IN_ONE_T(binary_search)
 DRIFT_ONE_IN_TWO_T(binary_search)
-
 DRIFT_ONE_IN_ONE_T(equal_range)
 DRIFT_ONE_IN_TWO_T(equal_range)
-/*
 
-merge
+/* merge, inplace_merge, includes, set_difference, 
+   set_intersection, set_symmetric_difference, set_union */
 
-inplace_merge
+/* is_heap */
 
-includes
+DRIFT_ONE_IN(is_heap)
 
-set_difference
+/* is_heap_until */
 
-set_intersection
+/* make_heap, push_heap, pop_heap, sort_heap */
 
-set_symmetric_difference
+DRIFT_ONE_IN(make_heap)
+DRIFT_ONE_IN_ONE_T(make_heap)
+DRIFT_ONE_IN(push_heap)
+DRIFT_ONE_IN_ONE_T(push_heap)
+DRIFT_ONE_IN(pop_heap)
+DRIFT_ONE_IN_ONE_T(pop_heap)
+DRIFT_ONE_IN(sort_heap)
+DRIFT_ONE_IN_ONE_T(sort_heap)
 
-set_union
+/* max, min, minmax */
+/* max_element, min_element, minmax_element */
 
-is_heap
+DRIFT_ONE_IN(max_element)
+DRIFT_ONE_IN_ONE_T(max_element)
+DRIFT_ONE_IN(min_element)
+DRIFT_ONE_IN_ONE_T(min_element)
+DRIFT_ONE_IN(minmax_element)
+DRIFT_ONE_IN_ONE_T(minmax_element)
 
-is_heap_until
+/* clamp */
 
-make_heap
+/* equal */
+DRIFT_TWO_IN(equal)
+DRIFT_TWO_IN_ONE_T(equal)
+/* missing overloads taking last iterators for both ranges. */
 
-push_heap
+/* lexicographical_compare */
 
-pop_heap
-
-sort_heap
-
-max
-
-max_element
-
-min
-
-min_element
-
-minmax
-
-minmax_element
-
-clamp
-
-equal
-
-lexicographical_compare
-
-is_permutation
-
-next_permutation
-
-prev_permutation
-
-iota
-
-adjacent_difference
-
-partial_sum
-
-exclusive_scan
-
-inclusive_scan
-
-transform_exclusive_scan
-
-transform_inclusive_scan
-
-uninitialized_copy
-
-uninitialized_copy_n
-
-uninitialized_fill
-
-uninitialized_fill_n
-
-uninitialized_move
-
-uninitialized_move_n
-
-uninitialized_default_construct
-
-uninitialized_default_construct_n
-
-uninitialized_value_construct
-
-uninitialized_value_construct_n
-
-destroy_at
-
-destroy
-
-destroy_n */
+/* is_permutation, next_permutation, prev_permutation*/
+DRIFT_TWO_IN(is_permutation)
+DRIFT_TWO_IN_ONE_T(is_permutation)
+/* missing overloads taking last iterators for both ranges. */
+DRIFT_TWO_IN(next_permutation)
+DRIFT_TWO_IN_ONE_T(next_permutation)
+DRIFT_TWO_IN(prev_permutation)
+DRIFT_TWO_IN_ONE_T(prev_permutation)
 
 /* algorithms from <numeric> */
 /* iota */
@@ -344,33 +308,72 @@ DRIFT_ONE_IN_ONE_T(iota)
 DRIFT_ONE_IN_ONE_T(accumulate)
 DRIFT_ONE_IN_TWO_T(accumulate)
 
+/* inner_product */
+DRIFT_TWO_IN_ONE_T(inner_product)
+DRIFT_TWO_IN_THREE_T(inner_product)
+
+/* adjacent_difference */
+DRIFT_ONE_IN_ONE_OUT(adjacent_difference)
+DRIFT_ONE_IN_ONE_OUT_ONE_T(adjacent_difference)
+
+/* partial_sum */
 /* reduce */
 DRIFT_ONE_IN_ONE_T(reduce)
 DRIFT_ONE_IN_TWO_T(reduce)
+
+/* exclusive_scan */
+DRIFT_ONE_IN_ONE_OUT_ONE_T(exclusive_scan)
+DRIFT_ONE_IN_ONE_OUT_TWO_T(exclusive_scan)
+
+/* inclusive_scan */
+DRIFT_ONE_IN_ONE_OUT(inclusive_scan)
+DRIFT_ONE_IN_ONE_OUT_ONE_T(inclusive_scan)
+DRIFT_ONE_IN_ONE_OUT_TWO_T(inclusive_scan)
 
 /* transform_reduce */
 DRIFT_TWO_IN_ONE_T(transform_reduce)
 DRIFT_TWO_IN_THREE_T(transform_reduce)
 DRIFT_ONE_IN_THREE_T(transform_reduce)
 
-/* inner_product */
-DRIFT_TWO_IN_ONE_T(inner_product)
-DRIFT_TWO_IN_THREE_T(inner_product)
+/* transform_exclusive_scan */
+DRIFT_ONE_IN_ONE_OUT_THREE_T(transform_exclusive_scan)
 
-/*
-adjacent_difference
+/* transform_inclusive_scan */
+DRIFT_ONE_IN_ONE_OUT_TWO_T(transform_inclusive_scan)
+DRIFT_ONE_IN_ONE_OUT_THREE_T(transform_inclusive_scan)
 
-partial_sum
+/* Operations on uninitialized memory */
+/* uninitialized_copy */ 
+DRIFT_ONE_IN_ONE_OUT_ONE_T(uninitialized_copy)
 
-inclusive_scan
+/* uninitialized_copy_n */
 
-exclusive_scan
+/* uninitialized_fill */
+DRIFT_ONE_IN_ONE_T(uninitialized_fill)
 
-transform_inclusive_scan
+/* uninitialized_fill_n */
 
-transform_exclusive_scan
+/* uninitialized_move */
+DRIFT_ONE_IN_ONE_OUT(uninitialized_move)
 
-*/
+/* uninitialized_move_n */
+
+/* uninitialized_default_construct */
+DRIFT_ONE_IN(uninitialized_default_construct)
+
+/* uninitialized_default_construct_n */
+
+/* uninitialized_value_construct */
+DRIFT_ONE_IN(uninitialized_value_construct)
+
+/* uninitialized_value_construct_n */
+
+/* destroy_at */
+
+/* destroy */
+DRIFT_ONE_IN(destroy)
+
+/* destroy_n */
 
 
 #undef DRIFT_ONE_IN
@@ -381,6 +384,7 @@ transform_exclusive_scan
 #undef DRIFT_ONE_IN_ONE_OUT
 #undef DRIFT_ONE_IN_ONE_OUT_ONE_T
 #undef DRIFT_ONE_IN_ONE_OUT_TWO_T
+#undef DRIFT_ONE_IN_ONE_OUT_THREE_T
 #undef DRIFT_ONE_IN_TWO_OUT_ONE_T
 
 #undef DRIFT_TWO_IN

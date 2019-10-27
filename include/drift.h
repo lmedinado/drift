@@ -184,9 +184,9 @@ public:
 
     zip_iterator operator++(int) {
         auto temp = *this;
-        lmeta::tuple_visit(its,
-                           [](auto &&tel) { return ++std::forward<decltype(tel)>(tel); });
-        //++(*this);
+        // lmeta::tuple_visit(its,
+        //                    [](auto &&tel) { return ++std::forward<decltype(tel)>(tel); });
+        ++(*this);
         return temp;
     }
 
@@ -201,9 +201,9 @@ public:
     template <typename U = int, std::enable_if_t<detail::is_decrementable<iterator_category>, U> = 0>
     zip_iterator operator--(int) {
         auto temp = *this;
-        lmeta::tuple_visit(its,
-                           [](auto &&tel) { return --std::forward<decltype(tel)>(tel); });
-        //--(*this);
+        // lmeta::tuple_visit(its,
+        //                    [](auto &&tel) { return --std::forward<decltype(tel)>(tel); });
+        --(*this);
         return temp;
     }
 

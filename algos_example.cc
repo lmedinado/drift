@@ -21,5 +21,13 @@ int main() {
     std::cout << "there are " << drift::count_if(v, [](auto x) { return x % 2; })
               << " odd numbers in v.\n";
 
+    std::vector<int> u(10);
+    drift::iota(u, 12);
+
+    std::cout << "\n";
+    for(auto uu : u)
+    std::cout << ", " << uu;
+
+
     return 0;
 }
