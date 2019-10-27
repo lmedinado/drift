@@ -90,6 +90,19 @@ LMETA_ADL_WRAP(size)
 } // namespace lmeta
 
 namespace drift {
+/* iterator type traits */
+template <typename It>
+using iterator_category_t = typename std::iterator_traits<It>::iterator_category;
+
+template <typename It>
+using iter_difference_t = typename std::iterator_traits<It>::difference_type;
+
+template <typename It>
+using iter_value_t = typename std::iterator_traits<It>::value_type;
+
+template <typename It>
+using iter_reference_t = typename std::iterator_traits<It>::reference;
+
 
 namespace detail {
 
@@ -99,12 +112,11 @@ constexpr bool is_decrementable = std::is_base_of_v<std::bidirectional_iterator_
 template <typename ItCat>
 constexpr bool is_random_access = std::is_base_of_v<std::random_access_iterator_tag, ItCat>;
 
+
+
 template <typename... Its>
 struct weakest_iterator_tag {
-private:
-    template <typename It>
-    using iterator_category_t = typename std::iterator_traits<It>::iterator_category;
-
+private:  
     constexpr static auto tag_deducer() {
         if constexpr ((std::is_base_of_v<std::random_access_iterator_tag, iterator_category_t<Its>> and
                        ...))
@@ -304,7 +316,7 @@ public:
     /* todo: add cbegin, cend, rbegin, etc. */
     zip_iterator<Its...> begin() const { return begin_; }
     zip_iterator<Its...> end() const { return end_; }
-    typename std::iterator_traits<zip_iterator<Its...>>::difference_type size() const {
+    iter_difference_t<zip_iterator<Its...>> size() const {
         return end_ - begin_;
     }
 
@@ -449,7 +461,7 @@ public:
 
     indexed_iterator<It> begin() const { return begin_; }
     indexed_iterator<It> end() const { return end_; }
-    typename std::iterator_traits<It>::difference_type size() const {
+    iter_difference_t<It> size() const {
         return end_ - begin_;
     }
 
@@ -474,11 +486,12 @@ public:
 
     template <typename Range>
     explicit reverse_view(Range &&range)
-      : begin_(lmeta::adl_rbegin(range)), end_(lmeta::adl_rend(range)) {}
+      : begin_(std::make_reverse_iterator(lmeta::adl_end(range))),
+        end_(std::make_reverse_iterator(lmeta::adl_begin(range))) {}
 
     RIt begin() const { return begin_; }
     RIt end() const { return end_; }
-    typename std::iterator_traits<RIt>::difference_type size() const {
+    iter_difference_t<RIt> size() const {
         return end_ - begin_;
     }
 
@@ -501,7 +514,7 @@ public:
 
     It begin() const { return begin_; }
     It end() const { return end_; }
-    typename std::iterator_traits<It>::difference_type size() const {
+    iter_difference_t<It> size() const {
         return end_ - begin_;
     }
 
