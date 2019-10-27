@@ -123,15 +123,15 @@ namespace drift {
                          begin(out_range), std::forward<T>(t));                    \
     }
 
-#define DRIFT_TWO_IN_THREE_T(algo)                                                                            \
-    template <typename InRange1, typename InRange2, typename OutRange, typename T1, typename T2, typename T3> \
-    constexpr auto algo(InRange1 &&in_range1, InRange2 &&in_range2, T1 &&t1, T2 &&t2,                         \
-                        T3 &&t3) {                                                                            \
-        using std::begin;                                                                                     \
-        using std::end;                                                                                       \
-                                                                                                              \
-        return std::algo(begin(in_range1), end(in_range1), begin(in_range2),                                  \
-                         std::forward<T1>(t1), std::forward<T2>(t2), std::forward<T1>(t3));                   \
+#define DRIFT_TWO_IN_THREE_T(algo)                                                          \
+    template <typename InRange1, typename InRange2, typename T1, typename T2, typename T3>  \
+    constexpr auto algo(InRange1 &&in_range1, InRange2 &&in_range2, T1 &&t1, T2 &&t2,       \
+                        T3 &&t3) {                                                          \
+        using std::begin;                                                                   \
+        using std::end;                                                                     \
+                                                                                            \
+        return std::algo(begin(in_range1), end(in_range1), begin(in_range2),                \
+                         std::forward<T1>(t1), std::forward<T2>(t2), std::forward<T3>(t3)); \
     }
 
 /* std::all_of, std::any_of, std::none_of*/
@@ -252,7 +252,7 @@ DRIFT_ONE_IN_TWO_T(binary_search)
 DRIFT_ONE_IN_ONE_T(equal_range)
 DRIFT_ONE_IN_TWO_T(equal_range)
 
-/* merge, inplace_merge, includes, set_difference, 
+/* merge, inplace_merge, includes, set_difference,
    set_intersection, set_symmetric_difference, set_union */
 
 /* is_heap */
@@ -343,7 +343,7 @@ DRIFT_ONE_IN_ONE_OUT_TWO_T(transform_inclusive_scan)
 DRIFT_ONE_IN_ONE_OUT_THREE_T(transform_inclusive_scan)
 
 /* Operations on uninitialized memory */
-/* uninitialized_copy */ 
+/* uninitialized_copy */
 DRIFT_ONE_IN_ONE_OUT_ONE_T(uninitialized_copy)
 
 /* uninitialized_copy_n */

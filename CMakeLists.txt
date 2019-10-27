@@ -26,6 +26,8 @@ add_library(tests_main OBJECT tests/tests_main.cc)
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include")
 
 add_executable(test_zip tests/test_zip.cc $<TARGET_OBJECTS:tests_main>)
+add_executable(test_algo tests/test_algo.cc $<TARGET_OBJECTS:tests_main>)
 add_test(NAME test_zip COMMAND test_zip)
+add_test(NAME test_algo COMMAND test_algo)
 
 add_executable(algos_example algos_example.cc)

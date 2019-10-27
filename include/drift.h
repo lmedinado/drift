@@ -1,30 +1,30 @@
-/* drift is poor man's ranges. 
- *     
+/* drift is poor man's ranges.
+ *
  * Copyright (c) 2019 - present, Leandro Medina de Oliveira
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights 
+ * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is 
+ * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR \
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *
  * --- Optional exception to the license ---
  *
- * As an exception, if, as a result of your compiling your source code, portions 
- * of this Software are embedded into a machine-executable object form of such 
- * source code, you may redistribute such embedded portions in such object form 
+ * As an exception, if, as a result of your compiling your source code, portions
+ * of this Software are embedded into a machine-executable object form of such
+ * source code, you may redistribute such embedded portions in such object form
  * without including the above copyright and permission notices.
  */
 
@@ -304,7 +304,9 @@ public:
     /* todo: add cbegin, cend, rbegin, etc. */
     zip_iterator<Its...> begin() const { return begin_; }
     zip_iterator<Its...> end() const { return end_; }
-    std::ptrdiff_t size() const { return end_ - begin_; }
+    typename std::iterator_traits<zip_iterator<Its...>>::difference_type size() const {
+        return end_ - begin_;
+    }
 
 private:
     zip_iterator<Its...> begin_;
@@ -355,7 +357,7 @@ public:
         return temp;
     }
 
-     template <typename U = int, std::enable_if_t<detail::is_decrementable<iterator_category>, U> = 0>
+    template <typename U = int, std::enable_if_t<detail::is_decrementable<iterator_category>, U> = 0>
     indexed_iterator &operator--() {
         --it;
         return *this;
@@ -447,7 +449,9 @@ public:
 
     indexed_iterator<It> begin() const { return begin_; }
     indexed_iterator<It> end() const { return end_; }
-    std::ptrdiff_t size() const { return end_ - begin_; }
+    typename std::iterator_traits<It>::difference_type size() const {
+        return end_ - begin_;
+    }
 
 private:
     indexed_iterator<It> begin_;
@@ -460,8 +464,53 @@ indexed(Range &&range)->indexed<decltype(lmeta::adl_begin(range))>;
 /* generating input iterator */
 template <typename It, typename Gen>
 class generator {
-    //Gen gen;
-
+    // Gen gen;
 };
+
+template <typename RIt>
+class reverse_view {
+public:
+    reverse_view() = default;
+
+    template <typename Range>
+    explicit reverse_view(Range &&range)
+      : begin_(lmeta::adl_rbegin(range)), end_(lmeta::adl_rend(range)) {}
+
+    RIt begin() const { return begin_; }
+    RIt end() const { return end_; }
+    typename std::iterator_traits<RIt>::difference_type size() const {
+        return end_ - begin_;
+    }
+
+private:
+    RIt begin_;
+    RIt end_;
+};
+
+template <typename Range>
+reverse_view(Range &&range)->reverse_view<decltype(lmeta::adl_rbegin(range))>;
+
+template <typename It>
+class tail {
+public:
+    tail() = default;
+
+    template <typename Range>
+    explicit tail(Range &&range, size_t n = 1)
+      : begin_(std::next(lmeta::adl_begin(range), n)), end_(lmeta::adl_end(range)) {}
+
+    It begin() const { return begin_; }
+    It end() const { return end_; }
+    typename std::iterator_traits<It>::difference_type size() const {
+        return end_ - begin_;
+    }
+
+private:
+    It begin_;
+    It end_;
+};
+
+template <typename Range>
+tail(Range &&range)->tail<decltype(lmeta::adl_begin(range))>;
 
 } // namespace drift
