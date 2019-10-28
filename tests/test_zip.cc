@@ -93,7 +93,8 @@ TEST_CASE("can access by a zip iterator", "[zip]") {
         using std::end;
         using std::size;
         int i = size(arr1) - 1;
-        for (auto zi = drift::zip_iterator(begin(arr1) + size(arr1) - 1, begin(arr2) + size(arr2) - 1),
+        for (auto zi = drift::zip_iterator(begin(arr1) + size(arr1) - 1,
+                                           begin(arr2) + size(arr2) - 1),
                   zend = drift::zip_iterator(begin(arr1) - 1, begin(arr2) - 1);
              zi != zend; --zi) {
             auto [za1, za2] = *zi;
@@ -108,7 +109,8 @@ TEST_CASE("can access by a zip iterator", "[zip]") {
         using std::end;
         using std::size;
         int i = size(arr1) - 1;
-        for (auto zi = drift::zip_iterator(begin(arr1) + size(arr1) - 1, begin(arr2) + size(arr2) - 1),
+        for (auto zi = drift::zip_iterator(begin(arr1) + size(arr1) - 1,
+                                           begin(arr2) + size(arr2) - 1),
                   zend = drift::zip_iterator(begin(arr1) - 1, begin(arr2) - 1);
              zi != zend; zi--) {
             auto [za1, za2] = *zi;
@@ -154,8 +156,8 @@ TEST_CASE("can access by a zip iterator", "[zip]") {
     std::vector<int> x_sq;
     SECTION("back_inserter test") {
         auto z2 = drift::zip_iterator(back_inserter(x_sq));
-        for (auto z1 = drift::zip_iterator(begin(x));
-             z1 != drift::zip_iterator(end(x)); ++z1, ++z2) {
+        for (auto z1 = drift::zip_iterator(begin(x)); z1 != drift::zip_iterator(end(x));
+             ++z1, ++z2) {
             auto [xel] = *z1;
             auto [x_sq_el] = *z2;
 
@@ -288,8 +290,7 @@ TEST_CASE("random access zip iterator operations", "[zip]") {
 
     SECTION("arithmetic operations -- non-member plus") {
         int i = 0;
-        for (auto vb = drift::zip(v1, v2).begin(); vb != drift::zip(v1, v2).end();
-             vb = vb + 2) {
+        for (auto vb = drift::zip(v1, v2).begin(); vb != drift::zip(v1, v2).end(); vb = vb + 2) {
             auto [vii, vif] = *vb;
             REQUIRE(vii == v1[i]);
             REQUIRE(vif == v2[i]);
@@ -299,8 +300,7 @@ TEST_CASE("random access zip iterator operations", "[zip]") {
 
     SECTION("arithmetic operations -- non-member plus, integer first") {
         int i = 0;
-        for (auto vb = drift::zip(v1, v2).begin(); vb != drift::zip(v1, v2).end();
-             vb = 2 + vb) {
+        for (auto vb = drift::zip(v1, v2).begin(); vb != drift::zip(v1, v2).end(); vb = 2 + vb) {
             auto [vii, vif] = *vb;
             REQUIRE(vii == v1[i]);
             REQUIRE(vif == v2[i]);
@@ -323,8 +323,7 @@ TEST_CASE("random access zip iterator operations", "[zip]") {
 
     SECTION("arithmetic operations -- minus equals") {
         int i = 0;
-        for (auto vb = drift::zip(v1, v2).begin() + 1; vb != drift::zip(v1, v2).end();
-             vb += 2) {
+        for (auto vb = drift::zip(v1, v2).begin() + 1; vb != drift::zip(v1, v2).end(); vb += 2) {
             vb -= 1;
             auto [vii, vif] = *vb;
             REQUIRE(vii == v1[i]);
@@ -430,3 +429,17 @@ TEST_CASE("random access zip iterator operations", "[zip]") {
         }
     }
 }
+
+// TEST_CASE("std algorithms", "[zip]") {
+
+//     std::vector<int> v{0, 1, 2, 3, 4, 5};
+//     std::vector<int> w{6, 7, 8, 9, 0, 1};
+//     SECTION("iter_swap") {
+//         auto b = drift::zip(v, w).begin();
+//         auto e = --drift::zip(v, w).end();
+
+//         std::iter_swap(b, e);
+//         REQUIRE(v == std::vector<int>{5, 1, 2, 3, 4, 0});
+//         REQUIRE(w == std::vector<int>{1, 7, 8, 9, 0, 6});
+//     }
+// }

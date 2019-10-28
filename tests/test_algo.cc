@@ -111,7 +111,7 @@ TEST_CASE("adjacent find", "[algo]") {
     }
 }
 
-TEST_CASE("copy") {
+TEST_CASE("copy", "[algo]") {
 
     std::vector<int> from_vector(10);
     std::iota(from_vector.begin(), from_vector.end(), 0);
@@ -131,7 +131,7 @@ TEST_CASE("copy") {
     }
 }
 
-TEST_CASE("move") {
+TEST_CASE("move", "[algo]") {
     std::vector<std::unique_ptr<int>> v;
     v.emplace_back(new int(1));
     v.emplace_back(new int(2));
@@ -145,7 +145,7 @@ TEST_CASE("move") {
     REQUIRE(*(l[2]) == 3);
 }
 
-TEST_CASE("fill") {
+TEST_CASE("fill", "[algo]") {
 
     std::vector<int> v{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 
@@ -157,7 +157,7 @@ TEST_CASE("fill") {
     }
 }
 
-TEST_CASE("transform") {
+TEST_CASE("transform", "[algo]") {
     std::string s("hello");
     SECTION("same type") {
         drift::transform(s, s,
@@ -173,7 +173,7 @@ TEST_CASE("transform") {
     }
 }
 
-TEST_CASE("generate") {
+TEST_CASE("generate", "[algo]") {
     std::vector<int> v(5);
 
     SECTION("constant") {
@@ -190,10 +190,21 @@ TEST_CASE("generate") {
 
         REQUIRE(v == std::vector<int>{0, 1, 2, 3, 4});
     }
+
+    SECTION("with zip") {
+        std::vector<int> w(5);
+
+        drift::generate(drift::zip(v, w), [n = 0]() mutable {
+            auto n_ = n++;
+            return std::tuple{n_, n_ * n_};
+        });
+        REQUIRE(v == std::vector<int>{0, 1, 2, 3, 4});
+        REQUIRE(w == std::vector<int>{0, 1, 4, 9, 16});
+    }
 }
 
 /* minimum/maximum operations */
-TEST_CASE("max_element") {
+TEST_CASE("max_element", "[algo]") {
 
     std::vector<int> v{3, 1, -14, 1, 5, 9};
 
@@ -210,7 +221,7 @@ TEST_CASE("max_element") {
     }
 }
 
-TEST_CASE("min_element") {
+TEST_CASE("min_element", "[algo]") {
     std::vector<int> v{3, 1, 4, 1, 5, 9};
     SECTION("normal") {
 
@@ -220,7 +231,7 @@ TEST_CASE("min_element") {
     }
 }
 
-TEST_CASE("minmax_element") {
+TEST_CASE("minmax_element", "[algo]") {
     const auto v = {3, 9, 1, 4, 2, 5, 9};
     SECTION("T1") {
         const auto [min, max] = drift::minmax_element(v);
@@ -231,7 +242,7 @@ TEST_CASE("minmax_element") {
 }
 
 /* numeric operations */
-TEST_CASE("accumulate") {
+TEST_CASE("accumulate", "[algo]") {
 
     std::vector<int> v{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
@@ -262,7 +273,7 @@ TEST_CASE("accumulate") {
     }
 }
 
-TEST_CASE("inner_product") {
+TEST_CASE("inner_product", "[algo]") {
     std::vector<int> a{0, 1, 2, 3, 4};
     std::vector<int> b{5, 4, 2, 3, 1};
 

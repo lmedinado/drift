@@ -112,11 +112,9 @@ constexpr bool is_decrementable = std::is_base_of_v<std::bidirectional_iterator_
 template <typename ItCat>
 constexpr bool is_random_access = std::is_base_of_v<std::random_access_iterator_tag, ItCat>;
 
-
-
 template <typename... Its>
 struct weakest_iterator_tag {
-private:  
+private:
     constexpr static auto tag_deducer() {
         if constexpr ((std::is_base_of_v<std::random_access_iterator_tag, iterator_category_t<Its>> and
                        ...))
@@ -145,9 +143,6 @@ template <typename... Its>
 using weakest_iterator_tag_t = typename weakest_iterator_tag<Its...>::type;
 
 } // namespace detail
-
-/* reverse iterator */
-class reverse_iterator {};
 
 /* zip iterator */
 template <typename... Its>
@@ -276,7 +271,7 @@ public:
         return lhs.its == rhs.its;
     }
     friend bool operator!=(const zip_iterator &lhs, const zip_iterator &rhs) {
-        return !(lhs.its == rhs.its);
+        return !(lhs == rhs);
     }
 
     /* random access comparisons */
@@ -316,9 +311,7 @@ public:
     /* todo: add cbegin, cend, rbegin, etc. */
     zip_iterator<Its...> begin() const { return begin_; }
     zip_iterator<Its...> end() const { return end_; }
-    iter_difference_t<zip_iterator<Its...>> size() const {
-        return end_ - begin_;
-    }
+    iter_difference_t<zip_iterator<Its...>> size() const { return end_ - begin_; }
 
 private:
     zip_iterator<Its...> begin_;
@@ -461,9 +454,7 @@ public:
 
     indexed_iterator<It> begin() const { return begin_; }
     indexed_iterator<It> end() const { return end_; }
-    iter_difference_t<It> size() const {
-        return end_ - begin_;
-    }
+    iter_difference_t<It> size() const { return end_ - begin_; }
 
 private:
     indexed_iterator<It> begin_;
@@ -491,9 +482,7 @@ public:
 
     RIt begin() const { return begin_; }
     RIt end() const { return end_; }
-    iter_difference_t<RIt> size() const {
-        return end_ - begin_;
-    }
+    iter_difference_t<RIt> size() const { return end_ - begin_; }
 
 private:
     RIt begin_;
@@ -514,9 +503,7 @@ public:
 
     It begin() const { return begin_; }
     It end() const { return end_; }
-    iter_difference_t<It> size() const {
-        return end_ - begin_;
-    }
+    iter_difference_t<It> size() const { return end_ - begin_; }
 
 private:
     It begin_;
