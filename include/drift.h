@@ -464,10 +464,58 @@ private:
 template <typename Range>
 indexed(Range &&range)->indexed<decltype(lmeta::adl_begin(range))>;
 
+/* generator */
+template <typename Gen>
+class generator_iterator {
+public:
+    /* usual iterator typedefs */
+    using difference_type = std::ptrdiff_t;
+    using value_type = std::result_of_t<Gen()>;
+    using pointer = value_type *;
+    using reference = value_type;
+    using iterator_category = std::input_iterator_tag;
+
+    generator_iterator() = default;
+    generator_iterator(Gen gen) : gen(gen), result{gen()} {}
+
+    /* dereference */
+    reference operator*() const { return result; }
+
+    /* increment */
+    generator_iterator &operator++() {
+        result = gen();
+    }
+
+    generator_iterator &operator++(int) {
+        auto temp = *this;
+        ++(*this);
+        return temp;
+    }
+
+    /* comparison */
+    friend bool operator==(const generator_iterator &lhs, const generator_iterator &rhs) {
+        return (lhs.gen == rhs.gen) and (lhs.result == rhs.result);
+    }
+    friend bool operator!=(const generator_iterator &lhs, const generator_iterator &rhs) {
+        return !(lhs == rhs);
+    }
+private:
+    Gen gen;
+    value_type result;
+};
+
 /* generating input iterator */
-template <typename It, typename Gen>
+template <typename It>
 class generator {
-    // Gen gen;
+public:
+    generator() = default;
+
+    template <typename Gen>
+    explicit generator(typename generator_iterator<Gen>::value_type begin_,
+                       typename generator_iterator<Gen>::value_type end_, Gen gen) {}
+
+private:
+    It begin_, end_;
 };
 
 template <typename RIt>
