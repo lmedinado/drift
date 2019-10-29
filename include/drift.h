@@ -480,6 +480,7 @@ public:
 
     /* dereference */
     reference operator*() const { return result; }
+    //reference operator*() const { return gen(); }
 
     /* increment */
     generator_iterator &operator++() {
@@ -501,7 +502,7 @@ public:
     }
 private:
     Gen gen;
-    value_type result;
+    //value_type result;
 };
 
 /* generating input iterator */
