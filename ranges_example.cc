@@ -2,10 +2,10 @@
 #include <vector>
 #include <iostream>
 
-#include "include/ranges.h"
+#include "include/drift.h"
 
 int main() {
-   // #ifdef XXXXX
+ 
     auto z = drift::zip<int*>();
     int a = 0, b = 1, c = 2;
     auto zz = drift::zip_iterator(&a,&b,&c);
@@ -124,19 +124,19 @@ int main() {
         std::cout << "\nb1, b2: " << b1 << b2;
     }
 
-    std::cout << "\ntesting enumerate";
+    std::cout << "\ntesting indexed";
     auto ex = std::vector{"zebra", "dog", "caiman", "frog"};
-    for(auto [i, v] : drift::enumerate(ex)) {
+    for(auto [i, v] : drift::indexed(ex)) {
         std::cout << "\n" << i << ": " << v;
     }
     
     std::cout << "\ntesting enumerate<bool>";
-    for(auto [i, b] : drift::enumerate(vb1)) {
+    for(auto [i, b] : drift::indexed(vb1)) {
         std::cout << "\n" << i << ": " << b;
     }
 
     std::cout << "\ntesting enumerate and zip together";
-    for(auto [i, vb] : drift::enumerate(drift::zip(vb1, vb2))) {
+    for(auto [i, vb] : drift::indexed(drift::zip(vb1, vb2))) {
         auto [b1, b2] = vb;
         std::cout << "\n" << i << ": " << b1 << b2;
     }
