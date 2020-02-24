@@ -1,23 +1,33 @@
 cmake_minimum_required(VERSION 3.0)
-set(CMAKE_C_COMPILER "clang")
-set(CMAKE_CXX_COMPILER "clang++")
+project(drift)
+
+#set(CMAKE_C_COMPILER "gcc")
+#set(CMAKE_CXX_COMPILER "g++")
+#set(CMAKE_C_COMPILER "clang")
+#set(CMAKE_CXX_COMPILER "clang++")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_BUILD_TYPE Release)
 
 #set(CMAKE_CXX_EXTENSIONS OFF)
 
-if (MSVC)
+if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     add_compile_options(/permissive-)
-endif (MSVC)
-project(drift)
+endif ()
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    add_link_options(-static-libstdc++)
+endif ()
+
+#add_link_options($<$<CXX_COMPILER_ID:GNU>:-static-libstdc++>)
+
+
 
 enable_testing()
 
 add_library(drift INTERFACE)
 target_include_directories(drift INTERFACE include/)
 
-set(header_files include/drift.h)
+set(header_files include/drift.h include/algorithm.h)
 target_sources(drift INTERFACE "$<BUILD_INTERFACE:${header_files}>")
 
 # tests
@@ -34,3 +44,4 @@ add_test(NAME test_algo COMMAND test_algo)
 add_test(NAME test_generator COMMAND test_generator)
 
 add_executable(algos_example algos_example.cc)
+add_executable(ranges_example ranges_example.cc)
