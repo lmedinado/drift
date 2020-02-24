@@ -430,6 +430,40 @@ TEST_CASE("random access zip iterator operations", "[zip]") {
     }
 }
 
+
+TEST_CASE("vector of vectors", "[zip]") {
+    const auto vv = std::vector<std::vector<int>>{{1, 2, 3}, {4, 5, 6, 7}};
+    /* */ auto wv = std::vector<std::vector<int>>{{8, 9, 10}, {11, 12, 13, 14}};
+    
+    SECTION("simple iteration") {
+        int i = 0;
+        for (auto [v, w] : drift::zip(vv, wv)) {
+            int j = 0;
+            for(auto [a, b] :drift::zip(v, w)) {
+                REQUIRE(a == vv[i][j]);
+                REQUIRE(b == wv[i][j]);
+                ++j;
+            }
+            ++i;
+        }
+    }
+
+    SECTION("mutation") {
+        int i = 0;
+        const auto old_wv = wv;
+        for (auto [v, w] : drift::zip(vv, wv)) {
+            int j = 0;
+            for(auto [a, b] :drift::zip(v, w)) {
+                b += a;
+                REQUIRE(a == vv[i][j]);
+                REQUIRE(b == wv[i][j]);
+                REQUIRE(wv[i][j] == vv[i][j] + old_wv[i][j]);
+                ++j;
+            }
+            ++i;
+        }
+    }
+}
 // TEST_CASE("std algorithms", "[zip]") {
 
 //     std::vector<int> v{0, 1, 2, 3, 4, 5};
