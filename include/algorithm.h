@@ -316,6 +316,7 @@ DRIFT_TWO_IN_THREE_T(inner_product)
 DRIFT_ONE_IN_ONE_OUT(adjacent_difference)
 DRIFT_ONE_IN_ONE_OUT_ONE_T(adjacent_difference)
 
+#ifndef __GLIBCXX__
 /* partial_sum */
 /* reduce */
 DRIFT_ONE_IN_ONE_T(reduce)
@@ -341,6 +342,8 @@ DRIFT_ONE_IN_ONE_OUT_THREE_T(transform_exclusive_scan)
 /* transform_inclusive_scan */
 DRIFT_ONE_IN_ONE_OUT_TWO_T(transform_inclusive_scan)
 DRIFT_ONE_IN_ONE_OUT_THREE_T(transform_inclusive_scan)
+
+#endif
 
 /* Operations on uninitialized memory */
 /* uninitialized_copy */
@@ -374,7 +377,6 @@ DRIFT_ONE_IN(uninitialized_value_construct)
 DRIFT_ONE_IN(destroy)
 
 /* destroy_n */
-
 
 #undef DRIFT_ONE_IN
 #undef DRIFT_ONE_IN_ONE_T

@@ -63,7 +63,7 @@ constexpr decltype(auto) tuple_visit_impl(Tuple &&t, Action &&a, std::index_sequ
 }
 } // namespace detail
 
-template <typename Action, typename Tuple, size_t... Is>
+template <typename Action, typename Tuple>
 constexpr decltype(auto) tuple_visit(Tuple &&t, Action &&a) {
     return detail::tuple_visit_impl(
         std::forward<Tuple>(t), std::forward<Action>(a),
@@ -321,6 +321,11 @@ private:
 template <typename... Ranges>
 zip(Ranges &&... ranges)->zip<decltype(lmeta::adl_begin(ranges))...>;
 
+/* workaround for gcc bug 80438 https://gcc.gnu.org/bugzilla/show_bug.cgi?id=80438 */
+#ifdef __GNUC__
+template <typename Range0, typename... Ranges>
+zip(Range0 &&range0, Ranges &&... ranges) -> zip<decltype(lmeta::adl_begin(range0)), decltype(lmeta::adl_begin(ranges))...>;
+#endif
 /* indexed iterator */
 template <typename It>
 class indexed_iterator {
