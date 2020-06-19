@@ -33,7 +33,7 @@
 #include <iterator>
 #include <tuple>
 
-namespace lmeta {
+namespace driftmeta {
 /* Scott Meyers' TD trick */
 template <typename T>
 struct TD;
@@ -58,7 +58,7 @@ auto safe_forward_as_tuple(Types &&... args) {
 namespace detail {
 template <typename Action, typename Tuple, size_t... Is>
 constexpr decltype(auto) tuple_visit_impl(Tuple &&t, Action &&a, std::index_sequence<Is...>) {
-    return lmeta::safe_forward_as_tuple(
+    return driftmeta::safe_forward_as_tuple(
         std::forward<Action>(a)(std::get<Is>(std::forward<Tuple>(t)))...);
 }
 } // namespace detail
@@ -70,24 +70,24 @@ constexpr decltype(auto) tuple_visit(Tuple &&t, Action &&a) {
         std::make_index_sequence<std::tuple_size_v<std::remove_reference_t<Tuple>>>());
 }
 
-#define LMETA_ADL_WRAP(fun)                     \
+#define DRIFTMETA_ADL_WRAP(fun)                 \
     template <typename T>                       \
     constexpr decltype(auto) adl_##fun(T &&t) { \
         using std::fun;                         \
         return fun(std::forward<T>(t));         \
     }
 
-LMETA_ADL_WRAP(begin)
-LMETA_ADL_WRAP(end)
-LMETA_ADL_WRAP(cbegin)
-LMETA_ADL_WRAP(cend)
-LMETA_ADL_WRAP(rbegin)
-LMETA_ADL_WRAP(rend)
-LMETA_ADL_WRAP(size)
+DRIFTMETA_ADL_WRAP(begin)
+DRIFTMETA_ADL_WRAP(end)
+DRIFTMETA_ADL_WRAP(cbegin)
+DRIFTMETA_ADL_WRAP(cend)
+DRIFTMETA_ADL_WRAP(rbegin)
+DRIFTMETA_ADL_WRAP(rend)
+DRIFTMETA_ADL_WRAP(size)
 
-#undef LMETA_ADL_WRAP
+#undef DRIFTMETA_ADL_WRAP
 
-} // namespace lmeta
+} // namespace driftmeta
 
 namespace drift {
 /* iterator type traits */
@@ -155,7 +155,7 @@ public:
     using reference = std::tuple<typename std::iterator_traits<Its>::reference...>;
 
     using iterator_category = detail::weakest_iterator_tag_t<Its...>;
-    // lmeta::TD<iterator_category> a;
+    // driftmeta::TD<iterator_category> a;
 
     /* construction */
     zip_iterator() = default;
@@ -165,14 +165,14 @@ public:
 
     /* dereference */
     reference operator*() const {
-        return lmeta::tuple_visit(its, [](auto &&tel) -> decltype(auto) {
+        return driftmeta::tuple_visit(its, [](auto &&tel) -> decltype(auto) {
             return (*std::forward<decltype(tel)>(tel));
         });
     }
 
     /* certain output iterators don't return 'reference' */
     decltype(auto) operator*() {
-        return lmeta::tuple_visit(its, [](auto &&tel) -> decltype(auto) {
+        return driftmeta::tuple_visit(its, [](auto &&tel) -> decltype(auto) {
             return (*std::forward<decltype(tel)>(tel));
         });
     }
@@ -184,14 +184,14 @@ public:
 
     /* increment */
     zip_iterator &operator++() {
-        lmeta::tuple_visit(its,
+        driftmeta::tuple_visit(its,
                            [](auto &&tel) { return ++std::forward<decltype(tel)>(tel); });
         return *this;
     }
 
     zip_iterator operator++(int) {
         auto temp = *this;
-        // lmeta::tuple_visit(its,
+        // driftmeta::tuple_visit(its,
         //                    [](auto &&tel) { return ++std::forward<decltype(tel)>(tel); });
         ++(*this);
         return temp;
@@ -200,7 +200,7 @@ public:
     /* decrement */
     template <typename U = int, std::enable_if_t<detail::is_decrementable<iterator_category>, U> = 0>
     zip_iterator &operator--() {
-        lmeta::tuple_visit(its,
+        driftmeta::tuple_visit(its,
                            [](auto &&tel) { return --std::forward<decltype(tel)>(tel); });
         return *this;
     }
@@ -208,7 +208,7 @@ public:
     template <typename U = int, std::enable_if_t<detail::is_decrementable<iterator_category>, U> = 0>
     zip_iterator operator--(int) {
         auto temp = *this;
-        // lmeta::tuple_visit(its,
+        // driftmeta::tuple_visit(its,
         //                    [](auto &&tel) { return --std::forward<decltype(tel)>(tel); });
         --(*this);
         return temp;
@@ -217,42 +217,42 @@ public:
     /* arithmetic */
     template <typename U = int, std::enable_if_t<detail::is_random_access<iterator_category>, U> = 0>
     zip_iterator &operator+=(difference_type n) {
-        lmeta::tuple_visit(
+        driftmeta::tuple_visit(
             its, [n](auto &&tel) { return std::forward<decltype(tel)>(tel) += n; });
         return *this;
     }
 
     template <typename U = int, std::enable_if_t<detail::is_random_access<iterator_category>, U> = 0>
     zip_iterator &operator-=(difference_type n) {
-        lmeta::tuple_visit(
+        driftmeta::tuple_visit(
             its, [n](auto &&tel) { return std::forward<decltype(tel)>(tel) -= n; });
         return *this;
     }
 
     template <typename U = int, std::enable_if_t<detail::is_random_access<iterator_category>, U> = 0>
     friend zip_iterator operator+(zip_iterator lhs, difference_type n) {
-        lmeta::tuple_visit(
+        driftmeta::tuple_visit(
             lhs.its, [n](auto &&tel) { return std::forward<decltype(tel)>(tel) += n; });
         return lhs;
     }
 
     template <typename U = int, std::enable_if_t<detail::is_random_access<iterator_category>, U> = 0>
     friend zip_iterator operator+(difference_type n, zip_iterator rhs) {
-        lmeta::tuple_visit(
+        driftmeta::tuple_visit(
             rhs.its, [n](auto &&tel) { return std::forward<decltype(tel)>(tel) += n; });
         return rhs;
     }
 
     template <typename U = int, std::enable_if_t<detail::is_random_access<iterator_category>, U> = 0>
     friend zip_iterator operator-(zip_iterator lhs, difference_type n) {
-        lmeta::tuple_visit(
+        driftmeta::tuple_visit(
             lhs.its, [n](auto &&tel) { return std::forward<decltype(tel)>(tel) -= n; });
         return lhs;
     }
 
     // template <typename U = int, std::enable_if_t<detail::is_random_access<iterator_category>, U> = 0>
     // friend zip_iterator operator-(difference_type n, zip_iterator rhs) {
-    //     lmeta::tuple_visit(
+    //     driftmeta::tuple_visit(
     //         rhs.its, [n](auto &&tel) { return std::forward<decltype(tel)>(tel) -= n; });
     //     return rhs;
     // }
@@ -306,7 +306,7 @@ public:
 
     template <typename... Ranges>
     explicit zip(Ranges &&... ranges)
-      : begin_(lmeta::adl_begin(ranges)...), end_(lmeta::adl_end(ranges)...) {}
+      : begin_(driftmeta::adl_begin(ranges)...), end_(driftmeta::adl_end(ranges)...) {}
 
     /* todo: add cbegin, cend, rbegin, etc. */
     zip_iterator<Its...> begin() const { return begin_; }
@@ -319,12 +319,12 @@ private:
 };
 
 template <typename... Ranges>
-zip(Ranges &&... ranges)->zip<decltype(lmeta::adl_begin(ranges))...>;
+zip(Ranges &&... ranges)->zip<decltype(driftmeta::adl_begin(ranges))...>;
 
 /* workaround for gcc bug 80438 https://gcc.gnu.org/bugzilla/show_bug.cgi?id=80438 */
 #ifdef __GNUC__
 template <typename Range0, typename... Ranges>
-zip(Range0 &&range0, Ranges &&... ranges) -> zip<decltype(lmeta::adl_begin(range0)), decltype(lmeta::adl_begin(ranges))...>;
+zip(Range0 &&range0, Ranges &&... ranges) -> zip<decltype(driftmeta::adl_begin(range0)), decltype(driftmeta::adl_begin(ranges))...>;
 #endif
 /* indexed iterator */
 template <typename It>
@@ -345,7 +345,7 @@ public:
     explicit indexed_iterator(It it, It begin_) : it(it), begin_(begin_) {}
 
     /* dereference */
-    reference operator*() const { return lmeta::safe_forward_as_tuple(it - begin_, *it); }
+    reference operator*() const { return driftmeta::safe_forward_as_tuple(it - begin_, *it); }
 
     /* certain output iterators don't return 'reference' */
     // decltype(auto) operator*() { return std::make_pair(begin_ - it, *it); }
@@ -455,7 +455,7 @@ public:
 
     template <typename Range>
     explicit indexed(Range &&range)
-      : begin_(lmeta::adl_begin(range)), end_(lmeta::adl_end(range)) {}
+      : begin_(driftmeta::adl_begin(range)), end_(driftmeta::adl_end(range)) {}
 
     indexed_iterator<It> begin() const { return begin_; }
     indexed_iterator<It> end() const { return end_; }
@@ -467,7 +467,7 @@ private:
 };
 
 template <typename Range>
-indexed(Range &&range)->indexed<decltype(lmeta::adl_begin(range))>;
+indexed(Range &&range)->indexed<decltype(driftmeta::adl_begin(range))>;
 
 /* generator */
 template <typename Gen>
@@ -541,8 +541,8 @@ public:
 
     template <typename Range>
     explicit reverse_view(Range &&range)
-      : begin_(std::make_reverse_iterator(lmeta::adl_end(range))),
-        end_(std::make_reverse_iterator(lmeta::adl_begin(range))) {}
+      : begin_(std::make_reverse_iterator(driftmeta::adl_end(range))),
+        end_(std::make_reverse_iterator(driftmeta::adl_begin(range))) {}
 
     RIt begin() const { return begin_; }
     RIt end() const { return end_; }
@@ -554,7 +554,7 @@ private:
 };
 
 template <typename Range>
-reverse_view(Range &&range)->reverse_view<decltype(lmeta::adl_rbegin(range))>;
+reverse_view(Range &&range)->reverse_view<decltype(driftmeta::adl_rbegin(range))>;
 
 template <typename It>
 class tail {
@@ -563,7 +563,7 @@ public:
 
     template <typename Range>
     explicit tail(Range &&range, size_t n = 1)
-      : begin_(std::next(lmeta::adl_begin(range), n)), end_(lmeta::adl_end(range)) {}
+      : begin_(std::next(driftmeta::adl_begin(range), n)), end_(driftmeta::adl_end(range)) {}
 
     It begin() const { return begin_; }
     It end() const { return end_; }
@@ -575,6 +575,6 @@ private:
 };
 
 template <typename Range>
-tail(Range &&range)->tail<decltype(lmeta::adl_begin(range))>;
+tail(Range &&range)->tail<decltype(driftmeta::adl_begin(range))>;
 
 } // namespace drift
