@@ -27,7 +27,7 @@ enable_testing()
 add_library(drift INTERFACE)
 target_include_directories(drift INTERFACE include/)
 
-set(header_files include/drift.h include/algorithm.h)
+set(header_files include/drift.h include/dysfunction.h include/algorithm.h)
 target_sources(drift INTERFACE "$<BUILD_INTERFACE:${header_files}>")
 
 # tests
